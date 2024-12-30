@@ -1,0 +1,30 @@
+boosts:
+    list:
+        global:
+            title: "<gradient:#FFB938:#FF8438>Boosts Globaux</gradient>"
+            none: "<red>Aucun boost actif"
+        personal:
+            title: "<gradient:#FFB938:#FF8438>Boosts Personnels</gradient>"
+        line:
+            active: "<green>Boost de +%percentage%% pendant %duration% <gray>(%remaining% restant)</gray>"
+            paused: "<yellow>Boost de +%percentage%% pendant %duration% <gray>(En pause - %remaining% restant)</gray>"
+            expired: "<red>Boost de +%percentage%% pendant %duration% <gray>(Expiré)</gray>"
+            queued: "<aqua>Boost de +%percentage%% pendant %duration% <gray>(En attente)</gray>"
+        remove:
+            button: "<red><hover:show_text:'<gray>Supprimer ce boost'><click:run_command:'/boost remove %owner% %boost%'>[✖]</click></hover>"
+        total: "<yellow>Boost total : <green>%percentage%%</green>"
+    global:
+        start: "<green>Un boost global de <bold>%percentage%%</bold> a démarré pour %duration%"
+        end: "<red>Le boost global de <bold>%percentage%%</bold> s'est terminé après %duration%"
+        added: "<green>Ajout d'un boost global de <bold>%percentage%%</bold> pour %duration%"
+        activated: "<green>Un boost global de <bold>%percentage%%</bold> pour %duration% a été lancé !"
+    personal:
+        start: "<green>Votre boost personnel de <bold>%percentage%%</bold> a démarré pour une durée de %duration%"
+        end: "<red>Votre boost personnel de <bold>%percentage%%</bold> s'est terminé."
+        added: "<green>Ajout d'un boost personnel de <bold>%percentage%%</bold> pour %duration% à <yellow>%player%</yellow>"
+        received: "<green>Vous avez reçu un boost personnel de <bold>%percentage%%</bold> pendant %duration%"
+        activated: "<green>Un boost personnel de <bold>%percentage%%</bold> pour %duration% a été lancé !"
+        resumed: "<green>Votre boost personnel de <bold>%percentage%%</bold> a été réactivé ! (il reste %duration%)"
+    removed: "<green>Boost supprimé avec succès"
+    notfound: "<red>Boost introuvable"
+reloaded: "<green>Configuration rechargée avec succès"

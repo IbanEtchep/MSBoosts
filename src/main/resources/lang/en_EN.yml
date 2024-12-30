@@ -1,0 +1,28 @@
+boosts:
+    list:
+        global:
+            title: "<gradient:#FFB938:#FF8438>Global Boosts</gradient>"
+            none: "<red>No active boosts"
+        personal:
+            title: "<gradient:#FFB938:#FF8438>Personal Boosts</gradient>"
+        line:
+            active: "<green>+%percentage%% boost for %duration% <gray>(%remaining% remaining)</gray>"
+            paused: "<yellow>+%percentage%% boost for %duration% <gray>(Paused - %remaining% remaining)</gray>"
+            expired: "<red>+%percentage%% boost for %duration% <gray>(Expired)</gray>"
+            queued: "<aqua>+%percentage%% boost for %duration% <gray>(Queued)</gray>"
+        remove:
+            button: "<red><hover:show_text:'<gray>Remove this boost'><click:run_command:'/boost remove %owner% %boost%'>[✖]</click></hover>"
+        total: "<yellow>Total boost: <green>%percentage%%</green>"
+    global:
+        start: "<green>Global boost of <bold>%percentage%%</bold> has started for %duration%"
+        end: "<red>Global boost of <bold>%percentage%%</bold> has ended after %duration%"
+        added: "<green>Added global boost of <bold>%percentage%%</bold> for %duration%"
+    personal:
+        start: "<green>Personal boost of <bold>%percentage%%</bold> has started for %duration%"
+        end: "<red>Personal boost of <bold>%percentage%%</bold> has ended after %duration%"
+        added: "<green>Added personal boost of <bold>%percentage%%</bold> for %duration% to <yellow>%player%</yellow>"
+        received: "<green>You received a personal boost of <bold>%percentage%%</bold> for %duration%"
+        activated: "<green>A personal boost of <bold>%percentage%%</bold> for %duration% has been activated"
+    removed: "<green>Boost removed successfully"
+    notfound: "<red>Boost not found"
+reloaded: "<green>Configuration reloaded successfully"

@@ -1,0 +1,6 @@
+name: MSBoosts
+version: '1.0'
+main: fr.iban.msboosts.MSBoostsPlugin
+api-version: '1.21'
+depend: [Core, Jobs]
+softdepend: [PlaceholderAPI]

@@ -1,0 +1,9 @@
+config-version: 1
+
+language: en_EN
+
+boosts:
+    global:
+        max-percentage: 200
+    personal:
+        max-percentage: 300
