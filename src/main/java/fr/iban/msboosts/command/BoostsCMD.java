@@ -3,6 +3,7 @@ package fr.iban.msboosts.command;
 import fr.iban.msboosts.MSBoostsPlugin;
 import fr.iban.msboosts.api.BoostManager;
 import fr.iban.msboosts.lang.Lang;
+import fr.iban.msboosts.listener.GuildClaimBonus;
 import fr.iban.msboosts.model.Boost;
 import fr.iban.msboosts.util.TimeFormatter;
 import org.bukkit.entity.Player;
@@ -60,6 +61,15 @@ public class BoostsCMD {
                     "percentage", boostManager.getTotalPercentage(targetId)+"",
                     "multiplier", boostManager.getTotalMultiplier(targetId)+""
             ));
+        }
+
+        GuildClaimBonus guildBonus = plugin.getGuildClaimBonus();
+        if (guildBonus != null) {
+            int xp = guildBonus.ofPlayer(targetId, GuildClaimBonus.Kind.XP);
+            int money = guildBonus.ofPlayer(targetId, GuildClaimBonus.Kind.MONEY);
+            if (xp > 0 || money > 0) {
+                sender.sendMessage(Lang.BOOST_LIST_GUILD.component("xp", xp + "", "money", money + ""));
+            }
         }
     }
 

@@ -13,6 +13,7 @@ boosts:
         remove:
             button: "<red><hover:show_text:'<gray>Supprimer ce boost'><click:run_command:'/boost remove %owner% %boost%'>[✖]</click></hover>"
         total: "<yellow>Boost total : <green>%percentage%%</green>"
+        guild: "<yellow>Bonus de guilde, dans vos claims : <green>+%xp%% XP jobs</green>, <green>+%money%% argent jobs</green>"
     global:
         start: "<green>Un boost global de <bold>%percentage%%</bold> a démarré pour %duration%"
         end: "<red>Le boost global de <bold>%percentage%%</bold> s'est terminé après %duration%"
