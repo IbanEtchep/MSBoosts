@@ -21,9 +21,10 @@ public class JobsListener implements Listener {
 
         if (player == null) return;
 
-        double multiplier = plugin.getBoostManager().getMultiplier(player.getUniqueId());
+        double multiplier = plugin.getBoostManager().getTotalMultiplier(player.getUniqueId());
 
         e.setAmount(e.getAmount() * multiplier);
+        e.setPoints(e.getPoints() * multiplier);
     }
 
     @EventHandler
@@ -32,7 +33,7 @@ public class JobsListener implements Listener {
 
         if (player == null) return;
 
-        double multiplier = plugin.getBoostManager().getMultiplier(player.getUniqueId());
+        double multiplier = plugin.getBoostManager().getTotalMultiplier(player.getUniqueId());
 
         e.setExp(e.getExp() * multiplier);
     }
