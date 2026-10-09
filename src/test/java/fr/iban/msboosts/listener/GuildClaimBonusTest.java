@@ -3,6 +3,8 @@ package fr.iban.msboosts.listener;
 import fr.iban.lands.model.land.GuildLand;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,5 +52,30 @@ class GuildClaimBonusTest {
         assertSame(blockAt, GuildClaimBonus.actionLocation(block, null, mob, player));
         assertSame(mobAt, GuildClaimBonus.actionLocation(null, null, mob, player));
         assertSame(playerAt, GuildClaimBonus.actionLocation(null, null, null, player));
+    }
+
+    @Test
+    void levelBonusesAreInheritedFromTheLastConfiguredLevel() throws InvalidConfigurationException {
+        YamlConfiguration config = new YamlConfiguration();
+        config.loadFromString("""
+                guild-claim-bonus:
+                  levels:
+                    1: { jobs-xp: 2 }
+                    3: { jobs-xp: 4 }
+                    10: { jobs-money: 3 }
+                """);
+        var levels = GuildClaimBonus.parseLevels(config.getConfigurationSection("guild-claim-bonus.levels"));
+
+        assertEquals(0, GuildClaimBonus.levelPercent(levels, 0, GuildClaimBonus.Kind.XP));
+        assertEquals(2, GuildClaimBonus.levelPercent(levels, 2, GuildClaimBonus.Kind.XP));
+        assertEquals(4, GuildClaimBonus.levelPercent(levels, 9, GuildClaimBonus.Kind.XP));
+        assertEquals(0, GuildClaimBonus.levelPercent(levels, 9, GuildClaimBonus.Kind.MONEY));
+        assertEquals(4, GuildClaimBonus.levelPercent(levels, 10, GuildClaimBonus.Kind.XP));
+        assertEquals(3, GuildClaimBonus.levelPercent(levels, 10, GuildClaimBonus.Kind.MONEY));
+    }
+
+    @Test
+    void noSectionMeansNoBonus() {
+        assertTrue(GuildClaimBonus.parseLevels(null).isEmpty());
     }
 }

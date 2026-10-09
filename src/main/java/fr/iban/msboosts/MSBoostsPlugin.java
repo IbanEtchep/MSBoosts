@@ -61,7 +61,7 @@ public final class MSBoostsPlugin extends JavaPlugin {
 
         PluginManager pluginManager = getServer().getPluginManager();
         if (pluginManager.isPluginEnabled("MSGuilds") && pluginManager.isPluginEnabled("MSLands")) {
-            guildClaimBonus = GuildClaimBonus.create();
+            guildClaimBonus = GuildClaimBonus.create(getConfig().getConfigurationSection("guild-claim-bonus.levels"));
         }
         pluginManager.registerEvents(new JoinQuitListeners(this), this);
         pluginManager.registerEvents(new CoreMessageListener(this), this);
