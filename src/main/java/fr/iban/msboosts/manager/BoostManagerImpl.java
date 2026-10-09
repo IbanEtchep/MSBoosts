@@ -1,6 +1,5 @@
 package fr.iban.msboosts.manager;
 
-import fr.iban.bukkitcore.manager.BukkitPlayerManager;
 import fr.iban.msboosts.MSBoostsPlugin;
 import fr.iban.msboosts.api.BoostManager;
 import fr.iban.msboosts.enums.BoostStatus;
@@ -10,6 +9,7 @@ import fr.iban.msboosts.model.Boost;
 import fr.iban.msboosts.storage.SqlStorage;
 import fr.iban.msboosts.storage.Storage;
 import fr.iban.msboosts.util.TimeFormatter;
+import fr.iban.network.NetworkPresence;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -64,7 +64,7 @@ public class BoostManagerImpl implements BoostManager {
     public void saveBoost(Boost boost) {
         plugin.executeQueued(() -> {
             storage.saveBoost(boost);
-            plugin.getMessenger().sendMessage(MSBoostsPlugin.BOOSTS_SYNC_CHANNEL, boost.getOwner().toString());
+            plugin.getNetwork().messenger().publish(MSBoostsPlugin.BOOSTS_SYNC_CHANNEL, boost.getOwner().toString());
         });
     }
 
@@ -78,7 +78,7 @@ public class BoostManagerImpl implements BoostManager {
 
         plugin.executeQueued(() -> {
             storage.removeBoost(boost);
-            plugin.getMessenger().sendMessage(MSBoostsPlugin.BOOSTS_SYNC_CHANNEL, owner.toString());
+            plugin.getNetwork().messenger().publish(MSBoostsPlugin.BOOSTS_SYNC_CHANNEL, owner.toString());
         });
     }
 
@@ -190,14 +190,14 @@ public class BoostManagerImpl implements BoostManager {
         plugin.executeQueued(() -> storage.saveBoost(boost));
 
         if(boost.isGlobal()) {
-            plugin.getPlayerManager().sendMessageIfOnline(boost.getOwner(), Lang.BOOST_GLOBAL_ACTIVATED.component(
+            plugin.getNetwork().presence().sendMessage(boost.getOwner(), Lang.BOOST_GLOBAL_ACTIVATED.component(
                     "percentage", boost.getPercentage() + "",
                     "duration", TimeFormatter.formatTime(boost.getDuration())
             ));
         }
 
-        if(plugin.getPlayerManager().isOnline(boost.getOwner())) {
-            plugin.getPlayerManager().sendMessageIfOnline(
+        if(plugin.getNetwork().presence().isOnline(boost.getOwner())) {
+            plugin.getNetwork().presence().sendMessage(
                     boost.getOwner(),
                     Lang.BOOST_PERSONAL_ACTIVATED.component(
                     "percentage", boost.getPercentage() + "",
@@ -214,7 +214,7 @@ public class BoostManagerImpl implements BoostManager {
 
     @Override
     public void handleBoosts() {
-        BukkitPlayerManager playerManager = plugin.getPlayerManager();
+        NetworkPresence presence = plugin.getNetwork().presence();
 
         for (List<Boost> boosts : this.boosts.values()) {
             for (Boost boost : boosts) {
@@ -232,12 +232,12 @@ public class BoostManagerImpl implements BoostManager {
 
                 if(!boost.getOwner().equals(GLOBAL_OWNER_ID)) {
                     // Mise en pause lors de la déconnexion
-                    if(boost.isActive() && !playerManager.isOnline(boost.getOwner())) {
+                    if(boost.isActive() && !presence.isOnline(boost.getOwner())) {
                         pauseBoost(boost, PauseReason.DISCONNECTED);
                     }
 
                     // Reprise lors de la reconnexion
-                    if(boost.isPaused() && playerManager.isOnline(boost.getOwner())) {
+                    if(boost.isPaused() && presence.isOnline(boost.getOwner())) {
                         resumeBoost(boost);
                     }
                 }

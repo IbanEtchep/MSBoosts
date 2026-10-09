@@ -47,7 +47,7 @@ public class BoostCMD {
                 "duration", TimeFormatter.formatTime(duration)
         ));
 
-        plugin.getPlayerManager().sendMessageIfOnline(target.getUniqueId(), Lang.BOOST_PERSONAL_RECEIVED.component(
+        plugin.getNetwork().presence().sendMessage(target.getUniqueId(), Lang.BOOST_PERSONAL_RECEIVED.component(
                 "percentage", percentage+"",
                 "duration", TimeFormatter.formatTime(duration)
         ));

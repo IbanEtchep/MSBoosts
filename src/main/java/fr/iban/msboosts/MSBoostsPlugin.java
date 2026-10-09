@@ -9,17 +9,16 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import fr.iban.bukkitcore.CoreBukkitPlugin;
 import fr.iban.bukkitcore.commands.*;
-import fr.iban.bukkitcore.manager.BukkitPlayerManager;
-import fr.iban.common.messaging.AbstractMessagingManager;
 import fr.iban.msboosts.api.BoostManager;
 import fr.iban.msboosts.command.BoostCMD;
 import fr.iban.msboosts.command.BoostsCMD;
 import fr.iban.msboosts.lang.LangManager;
-import fr.iban.msboosts.listener.CoreMessageListener;
 import fr.iban.msboosts.listener.JobsListener;
 import fr.iban.msboosts.listener.JoinQuitListeners;
 import fr.iban.msboosts.manager.BoostManagerImpl;
 import fr.iban.msboosts.papi.BoostPlaceholderExpansion;
+import fr.iban.network.NetworkBridge;
+import fr.iban.network.NetworkBridges;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,6 +30,7 @@ import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,6 +43,7 @@ public final class MSBoostsPlugin extends JavaPlugin {
     private LangManager langManager;
     private FoliaLib foliaLib;
     private YamlDocument config;
+    private NetworkBridge network;
 
     @Override
     public void onEnable() {
@@ -52,6 +53,8 @@ public final class MSBoostsPlugin extends JavaPlugin {
 
         this.foliaLib = new FoliaLib(this);
 
+        this.network = NetworkBridges.create(this);
+
         this.langManager = new LangManager(this);
         this.langManager.load();
 
@@ -59,12 +62,14 @@ public final class MSBoostsPlugin extends JavaPlugin {
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new JoinQuitListeners(this), this);
-        pluginManager.registerEvents(new CoreMessageListener(this), this);
         pluginManager.registerEvents(new JobsListener(this), this);
 
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
             new BoostPlaceholderExpansion(this).register();
         }
+
+        network.messenger().subscribe(BOOSTS_SYNC_CHANNEL,
+                message -> boostManager.loadBoosts(UUID.fromString(message.payload())));
 
         registerCommands();
     }
@@ -73,6 +78,9 @@ public final class MSBoostsPlugin extends JavaPlugin {
     public void onDisable() {
         boostManager.handleBoosts();
         singleThreadExecutor.shutdown();
+        if (network != null) {
+            network.close();
+        }
     }
 
     public void loadConfig() {
@@ -121,12 +129,8 @@ public final class MSBoostsPlugin extends JavaPlugin {
         singleThreadExecutor.execute(runnable);
     }
 
-    public BukkitPlayerManager getPlayerManager() {
-        return CoreBukkitPlugin.getInstance().getPlayerManager();
-    }
-
-    public AbstractMessagingManager getMessenger() {
-        return CoreBukkitPlugin.getInstance().getMessagingManager();
+    public NetworkBridge getNetwork() {
+        return network;
     }
 
     public LangManager getLangManager() {
