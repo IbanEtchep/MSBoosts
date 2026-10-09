@@ -36,7 +36,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.IbanEtchep.MSCore:core-paper:1.1.0")
     // Cross-server services, works with or without MSCore. Pinned to the MSCore commit adding it until it is released.
-    implementation("com.github.IbanEtchep.MSCore:core-network:fb1b34ce45")
+    implementation("com.github.IbanEtchep.MSCore:core-network:67fd425f41")
     compileOnly('com.github.Zrips:Jobs:v5.2.2.3') {
         transitive = false  // Ignore toutes les dépendances transitives
     }
