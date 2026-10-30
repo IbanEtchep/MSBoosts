@@ -6,7 +6,6 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import fr.iban.bukkitcore.CoreBukkitPlugin;
 import fr.iban.bukkitcore.commands.*;
 import fr.iban.bukkitcore.manager.BukkitPlayerManager;
@@ -60,7 +59,7 @@ public final class MSBoostsPlugin extends JavaPlugin {
         this.boostManager = new BoostManagerImpl(this);
 
         PluginManager pluginManager = getServer().getPluginManager();
-        if (pluginManager.isPluginEnabled("MSGuilds") && pluginManager.isPluginEnabled("MSLands")) {
+        if (pluginManager.isPluginEnabled("ArtisanGuilds") && pluginManager.isPluginEnabled("MSLands")) {
             guildClaimBonus = GuildClaimBonus.create(getConfig().getConfigurationSection("guild-claim-bonus.levels"));
         }
         pluginManager.registerEvents(new JoinQuitListeners(this), this);
@@ -88,7 +87,7 @@ public final class MSBoostsPlugin extends JavaPlugin {
                     GeneralSettings.builder().setKeyFormat(GeneralSettings.KeyFormat.OBJECT).build(),
                     LoaderSettings.DEFAULT,
                     DumperSettings.DEFAULT,
-                    UpdaterSettings.DEFAULT
+                    ConfigUpdate.SETTINGS
             );
             config.update();
             config.save();
@@ -138,7 +137,7 @@ public final class MSBoostsPlugin extends JavaPlugin {
         return langManager;
     }
 
-    /** Null without MSGuilds and MSLands: no guild claim bonus then. */
+    /** Null without ArtisanGuilds and MSLands: no guild claim bonus then. */
     public GuildClaimBonus getGuildClaimBonus() {
         return guildClaimBonus;
     }
