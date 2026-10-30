@@ -1,7 +1,7 @@
 package fr.iban.msboosts.listener;
 
-import fr.iban.guilds.GuildsPlugin;
-import fr.iban.guilds.model.Guild;
+import com.github.ibanetchep.artisanguilds.api.ArtisanGuildsApi;
+import com.github.ibanetchep.artisanguilds.api.Guild;
 import fr.iban.lands.LandsPlugin;
 import fr.iban.lands.model.SChunk;
 import fr.iban.lands.model.land.GuildLand;
@@ -22,7 +22,8 @@ import java.util.UUID;
 /**
  * The jobs bonus of a guild level ({@code guild-claim-bonus.levels} in this plugin's config),
  * earned for actions done inside the player's own guild claims (MSLands). Only built when both
- * MSGuilds and MSLands are present.
+ * ArtisanGuilds and MSLands are present. The guild and its level come from ArtisanGuilds' API,
+ * looked up on each call: it is registered once the guilds are loaded, and no bonus applies before.
  */
 public class GuildClaimBonus {
 
@@ -30,19 +31,17 @@ public class GuildClaimBonus {
 
     record Bonus(int xp, int money) {}
 
-    private final GuildsPlugin guilds;
     private final LandsPlugin lands;
     private final NavigableMap<Integer, Bonus> levels;
 
-    public GuildClaimBonus(GuildsPlugin guilds, LandsPlugin lands, NavigableMap<Integer, Bonus> levels) {
-        this.guilds = guilds;
+    public GuildClaimBonus(LandsPlugin lands, NavigableMap<Integer, Bonus> levels) {
         this.lands = lands;
         this.levels = levels;
     }
 
-    /** Kept here so MSBoosts' own classes never reference MSGuilds / MSLands types. */
+    /** Kept here so MSBoosts' own classes never reference ArtisanGuilds / MSLands types. */
     public static GuildClaimBonus create(@Nullable ConfigurationSection levels) {
-        return new GuildClaimBonus(GuildsPlugin.getInstance(), LandsPlugin.getInstance(), parseLevels(levels));
+        return new GuildClaimBonus(LandsPlugin.getInstance(), parseLevels(levels));
     }
 
     /** A level that does not set {@code jobs-xp} or {@code jobs-money} keeps the previous level's. */
@@ -78,7 +77,7 @@ public class GuildClaimBonus {
     /** Percentage for an action done at {@code location}; 0 outside the player's guild claims. */
     public int at(Player player, @Nullable Location location, Kind kind) {
         if (location == null) return 0;
-        Guild guild = guilds.getGuildManager().getGuildByPlayerId(player.getUniqueId());
+        Guild guild = guildOf(player.getUniqueId());
         if (guild == null) return 0;
         Land land = lands.getLandRepository().getLandAt(new SChunk(location));
         return percent(guild.getId(), land, levelPercent(guild, kind));
@@ -86,12 +85,17 @@ public class GuildClaimBonus {
 
     /** What the player's guild level grants inside its claims, wherever the player stands — for display. */
     public int ofPlayer(UUID playerId, Kind kind) {
-        Guild guild = guilds.getGuildManager().getGuildByPlayerId(playerId);
+        Guild guild = guildOf(playerId);
         return guild == null ? 0 : levelPercent(guild, kind);
     }
 
+    private static @Nullable Guild guildOf(UUID playerId) {
+        ArtisanGuildsApi api = ArtisanGuildsApi.get();
+        return api == null ? null : api.getGuildByPlayer(playerId);
+    }
+
     private int levelPercent(Guild guild, Kind kind) {
-        return levelPercent(levels, guilds.getGuildLevelingManager().getLevel(guild), kind);
+        return levelPercent(levels, guild.getLevel(), kind);
     }
 
     static int percent(@Nullable UUID playerGuildId, @Nullable Land land, int levelPercent) {
