@@ -7,3 +7,11 @@ boosts:
         max-percentage: 200
     personal:
         max-percentage: 300
+
+# Jobs bonus (%) for actions done inside the player's own guild claims, by guild level.
+# Needs ArtisanGuilds and MSLands. A level that does not set jobs-xp / jobs-money keeps the previous
+# level's. Without this section, no bonus.
+#guild-claim-bonus:
+#  levels:
+#    1: { jobs-xp: 2 }
+#    10: { jobs-money: 3 }

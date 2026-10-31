@@ -1,6 +1,7 @@
 package fr.iban.msboosts.papi;
 
 import fr.iban.msboosts.MSBoostsPlugin;
+import fr.iban.msboosts.listener.GuildClaimBonus;
 import fr.iban.msboosts.util.TimeFormatter;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -56,6 +57,14 @@ public class BoostPlaceholderExpansion extends PlaceholderExpansion {
 
         if(params.equalsIgnoreCase("global_time")) {
             return TimeFormatter.formatTime(plugin.getBoostManager().getGlobalBoostTimeLeft());
+        }
+
+        // What the player's guild level adds to jobs gains inside its own claims.
+        if (params.equalsIgnoreCase("guild_xp_percentage") || params.equalsIgnoreCase("guild_money_percentage")) {
+            GuildClaimBonus bonus = plugin.getGuildClaimBonus();
+            GuildClaimBonus.Kind kind = params.equalsIgnoreCase("guild_xp_percentage")
+                    ? GuildClaimBonus.Kind.XP : GuildClaimBonus.Kind.MONEY;
+            return String.valueOf(bonus == null ? 0 : bonus.ofPlayer(player.getUniqueId(), kind));
         }
 
         if(params.equalsIgnoreCase("total_percentage")) {

@@ -6,7 +6,6 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import fr.iban.bukkitcore.CoreBukkitPlugin;
 import fr.iban.bukkitcore.commands.*;
 import fr.iban.bukkitcore.manager.BukkitPlayerManager;
@@ -16,6 +15,7 @@ import fr.iban.msboosts.command.BoostCMD;
 import fr.iban.msboosts.command.BoostsCMD;
 import fr.iban.msboosts.lang.LangManager;
 import fr.iban.msboosts.listener.CoreMessageListener;
+import fr.iban.msboosts.listener.GuildClaimBonus;
 import fr.iban.msboosts.listener.JobsListener;
 import fr.iban.msboosts.listener.JoinQuitListeners;
 import fr.iban.msboosts.manager.BoostManagerImpl;
@@ -43,6 +43,7 @@ public final class MSBoostsPlugin extends JavaPlugin {
     private LangManager langManager;
     private FoliaLib foliaLib;
     private YamlDocument config;
+    private GuildClaimBonus guildClaimBonus;
 
     @Override
     public void onEnable() {
@@ -58,6 +59,9 @@ public final class MSBoostsPlugin extends JavaPlugin {
         this.boostManager = new BoostManagerImpl(this);
 
         PluginManager pluginManager = getServer().getPluginManager();
+        if (pluginManager.isPluginEnabled("ArtisanGuilds") && pluginManager.isPluginEnabled("MSLands")) {
+            guildClaimBonus = GuildClaimBonus.create(getConfig().getConfigurationSection("guild-claim-bonus.levels"));
+        }
         pluginManager.registerEvents(new JoinQuitListeners(this), this);
         pluginManager.registerEvents(new CoreMessageListener(this), this);
         pluginManager.registerEvents(new JobsListener(this), this);
@@ -83,7 +87,7 @@ public final class MSBoostsPlugin extends JavaPlugin {
                     GeneralSettings.builder().setKeyFormat(GeneralSettings.KeyFormat.OBJECT).build(),
                     LoaderSettings.DEFAULT,
                     DumperSettings.DEFAULT,
-                    UpdaterSettings.DEFAULT
+                    ConfigUpdate.SETTINGS
             );
             config.update();
             config.save();
@@ -131,5 +135,10 @@ public final class MSBoostsPlugin extends JavaPlugin {
 
     public LangManager getLangManager() {
         return langManager;
+    }
+
+    /** Null without ArtisanGuilds and MSLands: no guild claim bonus then. */
+    public GuildClaimBonus getGuildClaimBonus() {
+        return guildClaimBonus;
     }
 }

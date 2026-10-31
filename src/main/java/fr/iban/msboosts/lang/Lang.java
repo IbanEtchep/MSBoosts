@@ -17,6 +17,7 @@ public enum Lang {
     BOOST_LIST_NONE("boosts.list.global.none"),
     BOOST_LIST_REMOVE_BUTTON("boosts.list.remove.button"),
     BOOST_LIST_TOTAL("boosts.list.total"),
+    BOOST_LIST_GUILD("boosts.list.guild"),
 
     BOOST_GLOBAL_START("boosts.global.start"), // params: %percentage% %duration%
     BOOST_GLOBAL_END("boosts.global.end"), // params: %percentage% %duration%
